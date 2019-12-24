@@ -90,3 +90,8 @@ lint/tmp/
 /.idea/caches/build_file_checksums.ser
 /.idea/workspace.xml
 /.gradle/5.4.1/executionHistory/executionHistory.lock
+*.bin
+*.properties
+/.gradle/buildOutputCleanup
+/.gradle/5.4.1/fileHashes
+/.gradle/5.4.1/executionHistory
