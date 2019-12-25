@@ -38,6 +38,7 @@ import com.raywenderlich.githubrepolist.R
 import com.raywenderlich.githubrepolist.data.Item
 import com.raywenderlich.githubrepolist.data.RepoResult
 import com.raywenderlich.githubrepolist.extensions.ctx
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_repo.view.* //1
 
 class RepoListAdapter(private val repoList: RepoResult) : RecyclerView.Adapter<RepoListAdapter.ViewHolder>() {
@@ -59,6 +60,7 @@ class RepoListAdapter(private val repoList: RepoResult) : RecyclerView.Adapter<R
       itemView.username.text = repo.owner.login.orEmpty() //6
       itemView.repoName.text = repo.full_name.orEmpty() //7
       itemView.repoDescription.text = repo.description.orEmpty()
+      Picasso.get().load(repo.owner.avatar_url).into(itemView.icon)
     }
   }
 }
