@@ -36,34 +36,18 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.githubrepolist.R
 import com.raywenderlich.githubrepolist.api.RepositoryRetriever
-import com.raywenderlich.githubrepolist.data.RepoResult
 import com.raywenderlich.githubrepolist.ui.adapters.RepoListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+
 
 class MainActivity : Activity() {
-
-  private val repoRetriever = RepositoryRetriever() // 1
-
-  // 2
-  private val callback = object : Callback<RepoResult> {
-    override fun onFailure(call: Call<RepoResult>?, t: Throwable?) {
-      Log.e("MainActivity", "Problem calling Github API", t)
-    }
-
-    override fun onResponse(call: Call<RepoResult>?, response: Response<RepoResult>?) {
-      response?.isSuccessful.let {
-        val resultList = RepoResult(response?.body()?.items ?: emptyList())
-        repoList.adapter = RepoListAdapter(resultList)
-      }
-    }
-  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -72,12 +56,27 @@ class MainActivity : Activity() {
     repoList.layoutManager = LinearLayoutManager(this)
 
     if (isNetworkConnected()) {
-      repoRetriever.getRepositories(callback)
+      retrieveRepositories()
     } else {
       AlertDialog.Builder(this).setTitle("No Internet Connection")
               .setMessage("Please check your internet connection and try again")
               .setPositiveButton(android.R.string.ok) { _, _ -> }
               .setIcon(android.R.drawable.ic_dialog_alert).show()
+    }
+    refreshButton.setOnClickListener {
+      retrieveRepositories()
+    }
+  }
+
+  fun retrieveRepositories() {
+    //1 Create a Coroutine scope using a job to be able to cancel when needed
+    val mainActivityJob = Job()
+
+    //2 the Coroutine runs using the Main (UI) dispatcher
+    val coroutineScope = CoroutineScope(mainActivityJob + Dispatchers.Main)
+    coroutineScope.launch {//3
+      val resultList = RepositoryRetriever().getRepositories()
+      repoList.adapter = RepoListAdapter(resultList)
     }
   }
 
