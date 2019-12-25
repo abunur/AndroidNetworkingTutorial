@@ -1,7 +1,6 @@
 package com.raywenderlich.githubrepolist.api
 
 import com.raywenderlich.githubrepolist.data.RepoResult
-import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -21,8 +20,7 @@ class RepositoryRetriever {
         service = retrofit.create(GithubService::class.java) //4
     }
 
-    suspend fun getRepositories(callback: Callback<RepoResult>) { //5
-        val call = service.searchRepositories()
-        call.enqueue(callback)
+    suspend fun getRepositories(): RepoResult  { //5
+        return service.searchRepositories()
     }
 }
