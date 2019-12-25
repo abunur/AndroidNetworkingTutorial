@@ -115,3 +115,4 @@ lint/tmp/
 hs_err_pid*
 /.DS_Store
 
+/.gradle/5.4.1/javaCompile
